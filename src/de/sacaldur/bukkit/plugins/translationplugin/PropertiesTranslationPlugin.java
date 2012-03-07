@@ -1,0 +1,146 @@
+﻿/*
+ * Copyright 2011 Sacaldur
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.sacaldur.bukkit.plugins.translationplugin;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.logging.Level;
+
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
+
+/**
+ * The BlockAnimationPlugins main class. This class provide the data access for
+ * the plugins block and player listeners.
+ * 
+ * @author Sacaldur
+ */
+public class PropertiesTranslationPlugin extends JavaPlugin implements
+		ITranslationPlugin {
+	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
+
+	private String version;
+	private String name;
+
+	private String defaultlanguage = "en";
+
+	private final String CFG_FILE_NAME = "config.cfg";
+
+	private ArrayList<Translation> translations = new ArrayList<Translation>();
+
+	public PropertiesTranslationPlugin() {
+		super();
+	}
+
+	public void onEnable() {
+		PluginDescriptionFile pdfFile = this.getDescription();
+		this.version = pdfFile.getVersion();
+		this.name = pdfFile.getName();
+		Properties cfg = new Properties();
+		String fs = System.getProperty("file.separator");
+		try {
+			FileInputStream instr = new FileInputStream(new File("plugins" + fs
+					+ this.name + fs + CFG_FILE_NAME));
+			try {
+				cfg.load(instr);
+				this.defaultlanguage = cfg.getProperty("default_language");
+			} catch (IOException e) {
+				this.getServer()
+						.getLogger()
+						.log(Level.SEVERE,
+								this.name
+										+ ": an IOError occured while reading the configuration file!",
+								e);
+			} finally {
+				try {
+					instr.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (FileNotFoundException e) {
+			this.getServer()
+					.getLogger()
+					.log(Level.SEVERE,
+							this.name + ": No configuration file found!", e);
+		}
+		this.getServer().getLogger()
+				.info(this.name + " version " + this.version + " is enabled!");
+	}
+
+	public void onDisable() {
+		PluginDescriptionFile pdfFile = this.getDescription();
+		this.getServer()
+				.getLogger()
+				.info(pdfFile.getName() + " version " + pdfFile.getVersion()
+						+ " is disabled!");
+	}
+
+	public boolean isDebugging(final Player player) {
+		if (debugees.containsKey(player)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void setDebugging(final Player player, final boolean value) {
+		debugees.put(player, Boolean.valueOf(value));
+	}
+
+	public String getVersion() {
+		return this.version;
+	}
+
+	public String getNameR() {
+		return this.name;
+	}
+
+	private Translation getTranslation(String plugin, String language) {
+		for (Translation translation : translations) {
+			if (translation.getPlugin().equals(plugin)
+					&& translation.getLanguage().equals(language)) {
+				return translation;
+			}
+		}
+		if (Translation.isLanguageAvailable(plugin, language)) {
+			Translation translation = new Translation(plugin, language);
+			translations.add(translation);
+			return translation;
+		} else if (Translation.isLanguageAvailable(plugin, "en")) {
+			Translation translation = new Translation(plugin, language);
+			translations.add(translation);
+			return translation;
+		}
+		return null;
+	}
+
+	@Override
+	public String getTextTranslation(String plugin, String name) {
+		Translation translation = getTranslation(plugin, defaultlanguage);
+		if (translation != null) {
+			return translation.getTextTranslation(name);
+		} else {
+			return null;
+		}
+	}
+}

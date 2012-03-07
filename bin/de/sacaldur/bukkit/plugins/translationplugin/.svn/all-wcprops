@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/3/trunk/src/de/sacaldur/bukkit/plugins/translationplugin
+END
+ITranslationPlugin.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/!svn/ver/3/trunk/src/de/sacaldur/bukkit/plugins/translationplugin/ITranslationPlugin.java
+END
+PropertiesTranslationPlugin.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/!svn/ver/3/trunk/src/de/sacaldur/bukkit/plugins/translationplugin/PropertiesTranslationPlugin.java
+END
+Translation.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/2/trunk/src/de/sacaldur/bukkit/plugins/translationplugin/Translation.java
+END
