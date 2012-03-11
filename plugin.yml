@@ -1,4 +1,4 @@
 name: PropertiesTranslationPlugin
-main: de.sacaldur.bukkit.plugins.translationplugin.PropertiesTranslationPlugin
+main: net.rhocraft.rhotek.plugins.translationplugin.PropertiesTranslationPlugin
 version: 0.1.0
 Description: Provides translations for other plugins.
